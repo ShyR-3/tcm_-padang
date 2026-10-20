@@ -1,0 +1,893 @@
+@import "tailwindcss";
+/* FIX: Matikan overflow horizontal di mobile */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+@theme {
+  --color-forest-50: #f0f5f2;
+  --color-forest-100: #d9e6dd;
+  --color-forest-200: #b3ccb9;
+  --color-forest-300: #8db196;
+  --color-forest-400: #679673;
+  --color-forest-500: #4a7c59;
+  --color-forest-600: #3a6347;
+  --color-forest-700: #2a4a35;
+  --color-forest-800: #1a3d2e;
+  --color-forest-900: #0f2419;
+
+  --color-cream-50: #ffffff;
+  --color-cream-100: #faf8f3;
+  --color-cream-200: #f5eed9;
+  --color-cream-300: #ede3c0;
+
+  --color-gold-400: #d4b876;
+  --color-gold-500: #c9a961;
+  --color-gold-600: #b08f47;
+  --color-gold-700: #8a6f35;
+
+  --font-family-serif: "Playfair Display", Georgia, serif;
+  --font-family-sans: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-cream-100);
+    color: var(--color-forest-800);
+    font-family: var(--font-family-sans);
+    -webkit-font-smoothing: antialiased;
+    cursor: default;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-serif);
+  }
+  ::selection {
+    background-color: var(--color-gold-500);
+    color: var(--color-cream-100);
+  }
+}
+
+@layer components {
+  /* Eyebrow */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-gold-600);
+    font-weight: 500;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    width: 2rem;
+    height: 1px;
+    background-color: var(--color-gold-500);
+  }
+
+  /* Premium Button */
+  .btn-primary {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background-color: var(--color-forest-800);
+    color: var(--color-cream-100);
+    font-weight: 500;
+    border-radius: 9999px;
+    overflow: hidden;
+    transition: transform 500ms cubic-bezier(0.22, 0.84, 0.38, 1), box-shadow 500ms cubic-bezier(0.22, 0.84, 0.38, 1);
+    will-change: transform;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -10px rgba(26, 61, 46, 0.3);
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-gold-500), var(--color-gold-600));
+    opacity: 0;
+    transition: opacity 500ms cubic-bezier(0.22, 0.84, 0.38, 1);
+  }
+  .btn-primary:hover::before {
+    opacity: 1;
+  }
+  .btn-primary > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border: 1px solid rgba(26, 61, 46, 0.3);
+    color: var(--color-forest-800);
+    border-radius: 9999px;
+    background: transparent;
+    transition: all 500ms cubic-bezier(0.22, 0.84, 0.38, 1);
+  }
+  .btn-secondary:hover {
+    border-color: var(--color-gold-500);
+    color: var(--color-gold-600);
+    transform: translateY(-2px);
+  }
+
+  /* Custom Cursor */
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: #c9a961;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.2s cubic-bezier(0.22, 0.84, 0.38, 1);
+    mix-blend-mode: difference;
+  }
+
+  .cursor-ring {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(201, 169, 97, 0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.4s cubic-bezier(0.22, 0.84, 0.38, 1), 
+                width 0.3s, height 0.3s, 
+                background-color 0.3s;
+    mix-blend-mode: difference;
+  }
+
+  .cursor-dot.hovering,
+  .cursor-ring.hovering {
+    transform: scale(2);
+  }
+
+  .cursor-ring.hovering {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(201, 169, 97, 0.1);
+    border-color: rgba(201, 169, 97, 0.8);
+  }
+
+  /* Grain Texture */
+  .grain-overlay {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200%;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9997;
+    animation: grainMove 0.5s steps(10) infinite;
+  }
+
+  @keyframes grainMove {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-5%, -10%); }
+    20% { transform: translate(-15%, 5%); }
+    30% { transform: translate(7%, -25%); }
+    40% { transform: translate(-5%, 25%); }
+    50% { transform: translate(-15%, 10%); }
+    60% { transform: translate(15%, 0%); }
+    70% { transform: translate(0%, 15%); }
+    80% { transform: translate(3%, 35%); }
+    90% { transform: translate(-10%, 10%); }
+  }
+
+  /* Gradient Text Animation */
+  .gradient-text-animated {
+    background: linear-gradient(135deg, #1a3d2e 0%, #c9a961 50%, #1a3d2e 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 5s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
+
+  /* Light Leak Effect */
+  .light-leak {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
+      rgba(201, 169, 97, 0.15) 0%, 
+      transparent 50%);
+    opacity: 0;
+    transition: opacity 0.6s cubic-bezier(0.22, 0.84, 0.38, 1);
+    pointer-events: none;
+  }
+
+  .light-leak.active {
+    opacity: 1;
+  }
+
+  /* Advanced Card Hover */
+  .enterprise-card {
+    transition: transform 0.6s cubic-bezier(0.22, 0.84, 0.38, 1), 
+                box-shadow 0.6s cubic-bezier(0.22, 0.84, 0.38, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .enterprise-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(201, 169, 97, 0.05) 50%, 
+      transparent 100%);
+    transition: left 0.8s cubic-bezier(0.22, 0.84, 0.38, 1);
+  }
+
+  .enterprise-card:hover::before {
+    left: 100%;
+  }
+
+  .enterprise-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 40px 80px -20px rgba(26, 61, 46, 0.3),
+                0 0 0 1px rgba(201, 169, 97, 0.2);
+  }
+
+  /* Reveal Animation Classes */
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 1s cubic-bezier(0.22, 0.84, 0.38, 1),
+                transform 1s cubic-bezier(0.22, 0.84, 0.38, 1);
+  }
+
+  .reveal-up.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 1s cubic-bezier(0.22, 0.84, 0.38, 1),
+                transform 1s cubic-bezier(0.22, 0.84, 0.38, 1);
+  }
+
+  .reveal-scale.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .reveal-clip {
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 1.2s cubic-bezier(0.22, 0.84, 0.38, 1);
+  }
+
+  .reveal-clip.active {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Stagger Children */
+  .stagger-child {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: staggerIn 0.8s cubic-bezier(0.22, 0.84, 0.38, 1) forwards;
+  }
+
+  .stagger-child:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-child:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-child:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-child:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-child:nth-child(5) { animation-delay: 0.5s; }
+
+  @keyframes staggerIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Parallax Helper */
+  .parallax-layer {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Glow Pulse Animation */
+  @keyframes glowPulse {
+    0%, 100% { 
+      box-shadow: 0 0 20px rgba(201, 169, 97, 0.2);
+    }
+    50% { 
+      box-shadow: 0 0 40px rgba(201, 169, 97, 0.4),
+                  0 0 60px rgba(201, 169, 97, 0.2);
+    }
+  }
+
+  .glow-pulse {
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+
+  /* Magnetic Button Enhanced */
+  .magnetic-btn-enhanced {
+    transition: transform 0.4s cubic-bezier(0.22, 0.84, 0.38, 1);
+    will-change: transform;
+  }
+
+  /* Image Reveal */
+  .image-reveal {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .image-reveal::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1a3d2e;
+    transform: translateY(0);
+    transition: transform 1.2s cubic-bezier(0.22, 0.84, 0.38, 1);
+    z-index: 1;
+  }
+
+  .image-reveal.revealed::after {
+    transform: translateY(-100%);
+  }
+
+  .image-reveal img {
+    transform: scale(1.2);
+    transition: transform 1.4s cubic-bezier(0.22, 0.84, 0.38, 1);
+  }
+
+  .image-reveal.revealed img {
+    transform: scale(1);
+  }
+
+  /* Floating Animations */
+  @keyframes float-slow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -30px) scale(1.05); }
+    66% { transform: translate(-20px, 20px) scale(0.95); }
+  }
+  .animate-float-slow {
+    animation: float-slow 20s ease-in-out infinite;
+  }
+
+  @keyframes float-medium {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-40px, -40px); }
+  }
+  .animate-float-medium {
+    animation: float-medium 15s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+  }
+  .animate-pulse-glow {
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+
+  /* Scroll Indicator */
+  @keyframes scroll-bounce {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(12px); opacity: 0.5; }
+  }
+  .animate-scroll-bounce {
+    animation: scroll-bounce 2s ease-in-out infinite;
+  }
+
+  /* Cursor Glow */
+  .cursor-glow {
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201, 169, 97, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    transition: opacity 300ms;
+    will-change: transform;
+  }
+
+  /* Magnetic Button */
+  .magnetic-btn {
+    transition: transform 300ms cubic-bezier(0.22, 0.84, 0.38, 1);
+    will-change: transform;
+  }
+
+  /* Card Hover Premium */
+  .premium-card {
+    transition: transform 600ms cubic-bezier(0.22, 0.84, 0.38, 1), box-shadow 600ms cubic-bezier(0.22, 0.84, 0.38, 1);
+    will-change: transform;
+  }
+  .premium-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px -20px rgba(26, 61, 46, 0.25);
+  }
+  .premium-card .card-image {
+    transition: transform 800ms cubic-bezier(0.22, 0.84, 0.38, 1);
+    will-change: transform;
+  }
+  .premium-card:hover .card-image {
+    transform: scale(1.05);
+  }
+  .premium-card .gold-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-gold-500), transparent);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 600ms cubic-bezier(0.22, 0.84, 0.38, 1);
+  }
+  .premium-card:hover .gold-line {
+    transform: scaleX(1);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .cursor-glow,
+  .cursor-dot,
+  .cursor-ring,
+  .grain-overlay {
+    display: none;
+  }
+}
+
+/* Hide cursor glow on mobile */
+@media (max-width: 768px) {
+  .cursor-glow,
+  .cursor-dot,
+  .cursor-ring,
+  .grain-overlay {
+    display: none;
+  }
+  body {
+    cursor: auto;
+  }
+}
+
+/* ==========================================
+   MOBILE POLISH — Premium Mobile Experience
+   ========================================== */
+
+/* Proporsi lebih rapat di layar kecil (semua text & padding mengecil halus) */
+@media (max-width: 640px) {
+    html {
+        font-size: 15px;
+    }
+    body {
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+}
+
+/* Hilangkan flash biru saat tap di mobile */
+a, button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Cegah text panjang merusak layout */
+p, h1, h2, h3, h4, span {
+    overflow-wrap: break-word;
+}
+
+/* Scroll halus */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Gambar tidak bisa di-drag/select (terasa seperti aplikasi) */
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+/* ==========================================
+   MOBILE RESCUE PATCH — Fix "Tampilan Mobile Jelek"
+   ========================================== */
+
+/* Mobile Small & Medium */
+@media (max-width: 768px) {
+    /* Root scaling — bikin semua proporsi lebih kecil & rapi */
+    html {
+        font-size: 14.5px !important;
+    }
+
+    /* Section padding — bikin section lebih rapat, tidak kosong melompong */
+    section {
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+    }
+
+    /* Hero section khusus — butuh space lebih di atas */
+    #home {
+        padding-top: 5rem !important;
+        min-height: 95vh !important;
+    }
+
+    /* Kurangi gap antar section */
+    main > * + * {
+        margin-top: 0 !important;
+    }
+
+    /* Navbar padding */
+    nav {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+
+    /* Logo text lebih kecil */
+    nav .flex.flex-col span:first-child {
+        font-size: 0.875rem !important;
+    }
+
+    /* Headline mobile — jangan terlalu besar */
+    h1 {
+        font-size: 2.25rem !important;
+        line-height: 1.15 !important;
+        margin-bottom: 1rem !important;
+    }
+
+    h2 {
+        font-size: 1.75rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 1rem !important;
+    }
+
+    h3 {
+        font-size: 1.25rem !important;
+    }
+
+    h4 {
+        font-size: 1rem !important;
+    }
+
+    /* Paragraph mobile — lebih kecil */
+    p {
+        font-size: 0.875rem !important;
+        line-height: 1.6 !important;
+    }
+
+    /* Eyebrow (label kecil di atas judul) */
+    .eyebrow {
+        font-size: 0.625rem !important;
+        letter-spacing: 0.25em !important;
+    }
+
+    /* Karakter dekoratif raksasa (字, 藥, dll) — terlalu besar di mobile */
+    [class*="text-[20rem]"],
+    [class*="text-[25rem]"],
+    [class*="text-[35rem]"],
+    [class*="text-[30rem]"] {
+        font-size: 8rem !important;
+        opacity: 0.04 !important;
+    }
+
+    /* Hero background blur — terlalu besar di mobile */
+    [class*="w-96"][class*="h-96"] {
+        width: 14rem !important;
+        height: 14rem !important;
+    }
+    [class*="w-80"][class*="h-80"] {
+        width: 12rem !important;
+        height: 12rem !important;
+    }
+
+    /* Product cards — kurangi tinggi gambar */
+    [class*="h-64"][class*="overflow-hidden"] {
+        height: 12rem !important;
+    }
+
+    /* Card padding lebih kecil di mobile */
+    [class*="p-8"] {
+        padding: 1.25rem !important;
+    }
+    [class*="p-6"] {
+        padding: 1rem !important;
+    }
+
+    /* Button — lebih compact */
+    .btn-primary, .btn-secondary {
+        padding: 0.75rem 1.5rem !important;
+        font-size: 0.875rem !important;
+    }
+
+    /* Badge pills */
+    [class*="rounded-full"][class*="px-5"] {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+
+    /* FAQ section */
+    [class*="space-y-4"] {
+        gap: 0.5rem !important;
+    }
+
+    /* Footer padding */
+    footer {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+}
+
+/* Mobile Extra Small (iPhone SE, layar sangat kecil) */
+@media (max-width: 480px) {
+    html {
+        font-size: 13.5px !important;
+    }
+
+    h1 {
+        font-size: 1.875rem !important;
+    }
+
+    h2 {
+        font-size: 1.5rem !important;
+    }
+
+    #home {
+        padding-top: 4.5rem !important;
+    }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    html {
+        font-size: 15px;
+    }
+    h1 {
+        font-size: 3rem !important;
+    }
+    h2 {
+        font-size: 2.25rem !important;
+    }
+}
+
+/* ==========================================
+   FIX KHUSUS KOMPONEN YANG BERMASALAH DI MOBILE
+   ========================================== */
+
+/* 1. Grid mobile — 1 kolom saja, gap lebih kecil */
+@media (max-width: 768px) {
+    .grid.md\\:grid-cols-2,
+    .grid.md\\:grid-cols-3,
+    .grid.md\\:grid-cols-4 {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .grid.lg\\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+}
+
+/* 2. Testimonial & FAQ cards mobile */
+@media (max-width: 768px) {
+    .grid.md\\:grid-cols-3 {
+        gap: 0.75rem !important;
+    }
+}
+
+/* 3. CTA section mobile — button jangan terlalu besar */
+@media (max-width: 768px) {
+    [class*="px-10"][class*="py-5"] {
+        padding: 0.875rem 1.75rem !important;
+        font-size: 0.9375rem !important;
+    }
+}
+
+/* 4. Preloader mobile — lebih kecil */
+@media (max-width: 768px) {
+    [class*="z-[100]"] img {
+        width: 5rem !important;
+        height: 5rem !important;
+    }
+}
+
+/* 5. Google Maps iframe mobile — pastikan tidak overflow */
+iframe {
+    max-width: 100% !important;
+    height: 18rem !important;
+}
+
+@media (max-width: 768px) {
+    iframe {
+        height: 14rem !important;
+    }
+}
+
+/* 6. Floating WhatsApp — jangan terlalu besar di mobile */
+@media (max-width: 768px) {
+    [class*="fixed bottom-6 right-6"] {
+        width: 3.25rem !important;
+        height: 3.25rem !important;
+        bottom: 1.25rem !important;
+        right: 1.25rem !important;
+    }
+    [class*="fixed bottom-6 right-6"] svg {
+        width: 1.375rem !important;
+        height: 1.375rem !important;
+    }
+}
+
+/* 7. Scroll progress bar mobile — lebih tipis */
+@media (max-width: 768px) {
+    [class*="fixed top-0"][class*="h-1"] {
+        height: 2px !important;
+    }
+}
+
+/* 8. Form input mobile — padding lebih kecil */
+@media (max-width: 768px) {
+    input, textarea, select {
+        padding: 0.625rem 0.875rem !important;
+        font-size: 0.875rem !important;
+    }
+}
+
+/* 9. Card 3D tilt — matikan di mobile (performa + UX) */
+@media (max-width: 768px) {
+    [style*="transform-style: preserve-3d"] {
+        transform: none !important;
+    }
+    [style*="transform-style: preserve-3d"] > * {
+        transform: none !important;
+    }
+}
+
+/* 10. Parallax — matikan di mobile (hemat baterai + lebih smooth) */
+@media (max-width: 768px) {
+    [class*="parallax-layer"],
+    [style*="translateY"] {
+        transform: none !important;
+    }
+}
+
+/* ==========================================
+   TYPOGRAPHY MOBILE REFINEMENT
+   ========================================== */
+
+@media (max-width: 768px) {
+    /* Italic text (text [c9a961]) — jangan terlalu kontras */
+    .italic {
+        font-style: italic !important;
+    }
+
+    /* Chinese characters (Hanzi) — size lebih kecil */
+    [class*="tracking-wider"] {
+        font-size: 0.6875rem !important;
+        letter-spacing: 0.15em !important;
+    }
+
+    /* Label "Traditional care" di logo */
+    [class*="tracking-[0.2em]"] {
+        font-size: 0.5rem !important;
+        letter-spacing: 0.15em !important;
+    }
+}
+
+/* ==========================================
+   MOBILE-ONLY UTILITY CLASSES
+   ========================================== */
+
+@media (max-width: 768px) {
+    /* Spacing helper mobile */
+    .mb-mobile-sm { margin-bottom: 0.75rem !important; }
+    .mb-mobile-md { margin-bottom: 1rem !important; }
+    .mb-mobile-lg { margin-bottom: 1.5rem !important; }
+    
+    .mt-mobile-sm { margin-top: 0.75rem !important; }
+    .mt-mobile-md { margin-top: 1rem !important; }
+    .mt-mobile-lg { margin-top: 1.5rem !important; }
+}
+
+/* ==========================================
+   FIX: Animasi berlebihan yang bikin mobile lambat
+   ========================================== */
+
+@media (max-width: 768px) {
+    /* Matikan grain animation — berat di mobile */
+    .grain-overlay {
+        animation: none !important;
+        opacity: 0.015 !important;
+    }
+
+    /* Kurangi animasi float — bikin mobile berat */
+    .animate-float-slow,
+    .animate-float-medium {
+        animation-duration: 30s !important;
+    }
+
+    /* Kurangi pulse glow */
+    .glow-pulse,
+    .animate-pulse-glow {
+        animation-duration: 6s !important;
+    }
+
+    /* Matikan shine effect hover di mobile (touch tidak ada hover) */
+    .enterprise-card::before {
+        display: none !important;
+    }
+}
+
+/* ==========================================
+   FIX: Form kontak mobile
+   ========================================== */
+
+@media (max-width: 768px) {
+    form {
+        padding: 1.25rem !important;
+        border-radius: 1.25rem !important;
+    }
+    form label {
+        font-size: 0.75rem !important;
+        margin-bottom: 0.375rem !important;
+    }
+}
+
+/* ==========================================
+   FIX: Emergency banner mobile
+   ========================================== */
+
+@media (max-width: 768px) {
+    [class*="p-8 md:p-12"] {
+        padding: 1.5rem !important;
+    }
+    [class*="text-2xl md:text-4xl"] {
+        font-size: 1.375rem !important;
+    }
+}
+
+/* ==========================================
+   FINAL TOUCH: Safe area untuk notch/home indicator
+   ========================================== */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+    [class*="fixed bottom"] {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    footer {
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+    }
+}
